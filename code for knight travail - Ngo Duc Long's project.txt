@@ -1,0 +1,106 @@
+# Python3 code to find minimum steps to reach 
+# to specific cell in minimum moves by Knight 
+class Node:
+    def __init__(self,data,nextNode=None):
+        self.data = data
+        self.nextNode = nextNode
+
+    def getData(self):
+        return self.data
+
+    def getNextNode(self):
+        return self.nextNode
+
+    def setNextNode(self,val):
+        self.nextNode = val
+
+class LinkedList:
+    def __init__(self,head = None):
+        self.head = head
+    def copy(self):
+        curr = self.head
+        b=LinkedList()
+        while curr:
+            b.addNode(curr.data)
+            curr = curr.getNextNode()
+        return b
+    
+    def addNode(self,data):
+        newNode = Node(data)
+        if self.head==None:
+            self.head = newNode
+        else:
+            curr = self.head
+            while curr.nextNode!=None:
+                curr=curr.nextNode
+            curr.nextNode=newNode
+        return True         
+    def printNode(self):
+        curr = self.head
+        while curr:
+            print(curr.data)
+            curr = curr.getNextNode()
+
+
+class cell: 
+    def __init__(self, x = 0, y = 0, dist = 0,linkedlist=None): 
+        self.x = x 
+        self.y = y 
+        self.dist = dist 
+        self.linkedlist=linkedlist
+
+# checks whether given position is inside the board 
+def isInside(x, y, N): 
+    if (x >= 1 and x <= N and y >= 1 and y <= N): 
+        return True
+    return False
+
+# Method returns minimum step to reach 
+# target position 
+def minStepToReachTarget(knightpos,targetpos, N): 
+    
+    #all possible movments for the knight 
+    dx = [2, 2, -2, -2, 1, 1, -1, -1] 
+    dy = [1, -1, 1, -1, 2, -2, 2, -2] 
+
+    queue = [] 
+
+# push starting position of knight with 0 distance 
+    a=LinkedList()
+    queue.append(cell(knightpos[0], knightpos[1], 0,a)) 
+    
+    # make all cell unvisited 
+    visited = [[False for i in range(N + 1)] for j in range(N + 1)]
+    
+    # visit starting state 
+    
+    visited[knightpos[0]][knightpos[1]] = True
+    
+    # loop untill we have one element in queue 
+    while(len(queue) > 0): 
+        t = queue[0] 
+        queue.pop(0) 
+        
+        # if current cell is equal to target cell, return its distance and print out the path 
+        if(t.x == targetpos[0] and t.y == targetpos[1]): 
+            t.linkedlist.printNode()
+            return t.dist
+
+        # iterate for all reachable states and check whether the position is in the map or not 
+        for i in range(8): 
+            x = t.x + dx[i] 
+            y = t.y + dy[i] 
+            
+            if(isInside(x, y, N) and not visited[x][y]): 
+                visited[x][y] = True
+                a=t.linkedlist.copy()
+                a.addNode((x,y))
+                queue.append(cell(x, y, t.dist + 1,a)) 
+  
+
+# Driver Code
+if __name__=='__main__': 
+    N = 8
+    knightpos = [1, 1] 
+    targetpos = [6, 4] 
+    print(minStepToReachTarget(knightpos,targetpos, N)) 
